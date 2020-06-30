@@ -10,7 +10,7 @@ angleinc = 0.05
 grenze = 150
 
 x_values = np.random.rand(n)*5+1
-y_values = x_values*1+3.5 + np.random.randn(n)*1.2
+y_values = x_values*1.2+3.5 + np.random.randn(n)*1.2
 
 # initial regression
 regression = [0, np.mean(y_values)]
@@ -21,7 +21,7 @@ pmin = np.array([[min(x_values)], [min(x_values)*regression[0]+regression[1]]])
 pmean = np.array([[np.mean(x_values)], [np.mean(y_values)]])
 rotmatrix = np.array([[np.cos(angle),-np.sin(angle)], [np.sin(angle), np.cos(angle)]])
 residuals = [[],[]]
-regresstangente =[]
+
 
 # initialize figure
 fig = plt.figure()
@@ -38,19 +38,10 @@ ax1.set_facecolor('#bebebe')
 ax2.set_facecolor('#bebebe')
 
 def animate(i):
-    global regression
     global angle
-    global residuals
-    global x_values
-    global y_values
-    global pmax
-    global pmin
-    global pmean
     global direction
     global angleinc
     global grenze
-    global regresstangente
-    global count
 
     grad = 180/np.pi
 
