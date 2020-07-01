@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style, gridspec
 from math import degrees
+import time
 
 class RegressAni:
 
@@ -82,8 +83,7 @@ class RegressAni:
         self.ax1.set_xlabel("x", fontsize=17)
         self.ax1.set_ylabel("y", rotation=0, fontsize=17)
 
-        # plot residuals in ax2
-        # calculate current residualsquares
+        # calculate and plot current residualsquares
         self.residualsquares = 0
         for i in range(self.n):
             self.ax1.plot([self.x_values[i], self.x_values[i]], [self.y_values[i], self.x_values[i]*self.linreg[0]+self.linreg[1]], 'g')
@@ -92,6 +92,7 @@ class RegressAni:
         self.residuals[0] += [self.angle]
         self.residuals[1] += [self.residualsquares]
 
+        # plot residuals in ax2
         self.ax2.clear()
         self.ax2.set_title("$R^2$", fontsize=17)
         self.ax2.set_ylim(0,max(self.residuals[1]))
@@ -116,7 +117,9 @@ class RegressAni:
             self.regresstangente = np.polyfit([self.residuals[0][-1], self.residuals[0][-2]], [self.residuals[1][-1], self.residuals[1][-2]], 1)
             self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]])
         elif (len(self.residuals[1])>1):
+            self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]])
             print("done")
+            # stop animation when done
             self.anim.event_source.stop()
             self.anim_running = False
 
