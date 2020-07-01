@@ -21,7 +21,7 @@ pmin = np.array([[min(x_values)], [min(x_values)*regression[0]+regression[1]]])
 pmean = np.array([[np.mean(x_values)], [np.mean(y_values)]])
 rotmatrix = np.array([[np.cos(angle),-np.sin(angle)], [np.sin(angle), np.cos(angle)]])
 residuals = [[],[]]
-regresstangente =[]
+
 
 # initialize figure
 fig = plt.figure()
@@ -49,7 +49,7 @@ def animate(i):
     global direction
     global angleinc
     global grenze
-    global regresstangente
+#    global regresstangente
     global count
 
     grad = 180/np.pi
