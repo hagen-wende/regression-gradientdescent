@@ -10,6 +10,7 @@ import matplotlib.animation as animation
 from matplotlib import style, gridspec
 from math import degrees
 import time
+import pickle
 
 class RegressAni:
 
@@ -22,8 +23,19 @@ class RegressAni:
         self.limit = 150
 
         # generate random test sample
-        self.x_values = np.random.rand(self.n)*5+1
-        self.y_values = self.x_values*1.2+3.5 + np.random.randn(self.n)*1.2
+        # get values from files if present or generate data and pickle
+        try:
+            with open("data\\regression.data", "rb") as file:
+                self.x_values = pickle.load(file)
+                self.y_values = pickle.load(file)
+        except:
+            self.x_values = np.random.rand(self.n)*5+1
+            self.y_values = self.x_values*1.2+3.5 + np.random.randn(self.n)*1.2
+            with open("data\\regression.data", "wb") as file:
+                pickle.dump(self.x_values, file)
+                pickle.dump(self.y_values, file)
+
+
 
         # initial regression line parameters (horizontal line through mean of y-values)
         # [slope, y-intercept]
@@ -75,10 +87,10 @@ class RegressAni:
         self.ax1.clear()
         self.ax1.set_ylim(min(self.y_values)-1,max(self.y_values)+1)
         self.ax1.set_xlim(0,7)
-        self.ax1.plot(self.x_values, self.y_values,'o')
+        self.ax1.plot(self.x_values, self.y_values,'o', zorder=2)
 
         # plot regress line
-        self.ax1.plot(self.x_values, self.x_values*self.linreg[0]+self.linreg[1], 'r')
+        self.ax1.plot(self.x_values, self.x_values*self.linreg[0]+self.linreg[1], 'r', zorder = 3)
         self.ax1.set_title(f"y = {self.linreg[0]:.2f}*x + {self.linreg[1]:.2f}", fontsize=17)
         self.ax1.set_xlabel("x", fontsize=17)
         self.ax1.set_ylabel("y", rotation=0, fontsize=17)
@@ -86,7 +98,7 @@ class RegressAni:
         # calculate and plot current residualsquares
         self.residualsquares = 0
         for i in range(self.n):
-            self.ax1.plot([self.x_values[i], self.x_values[i]], [self.y_values[i], self.x_values[i]*self.linreg[0]+self.linreg[1]], 'g')
+            self.ax1.plot([self.x_values[i], self.x_values[i]], [self.y_values[i], self.x_values[i]*self.linreg[0]+self.linreg[1]], 'g', zorder=1)
             self.residualsquares += (self.y_values[i] - (self.x_values[i]*self.linreg[0]+self.linreg[1]))**2
 
         self.residuals[0] += [self.angle]
@@ -99,8 +111,8 @@ class RegressAni:
         self.ax2.set_xlabel("angle °", fontsize=17)
         self.ax2.set_ylabel("$R^2$", fontsize=17, rotation=0)
         self.ax2.yaxis.set_label_coords(-0.3, 0.5)
-        self.ax2.plot([degrees(x) for x in self.residuals[0]],self.residuals[1])
-        self.ax2.plot(degrees(self.residuals[0][-1]),self.residuals[1][-1], "ro")
+        self.ax2.plot([degrees(x) for x in self.residuals[0]],self.residuals[1], zorder=1)
+        self.ax2.plot(degrees(self.residuals[0][-1]),self.residuals[1][-1], "ro", zorder=3)
 
         # calculate turning criteria
         if (len(self.residuals[1])>1) and (self.residuals[1][-1] > self.residuals[1][-2]) and (self.residuals[1][-1] > self.limit):
@@ -115,9 +127,9 @@ class RegressAni:
         # starting from at least two points; radians is converted to degrees
         if (len(self.residuals[1])>1) and (abs(self.residuals[1][-1]-self.residuals[1][-2]) > 0.00001):
             self.regresstangente = np.polyfit([self.residuals[0][-1], self.residuals[0][-2]], [self.residuals[1][-1], self.residuals[1][-2]], 1)
-            self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]])
+            self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]], zorder=2)
         elif (len(self.residuals[1])>1):
-            self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]])
+            self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]], zorder=2)
             print("done")
             # stop animation when done
             self.anim.event_source.stop()
