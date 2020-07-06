@@ -112,7 +112,7 @@ class RegressAni:
             self.angle += self.angleinc*self.direction
 
         # plot tangent to residual function by plotting through the last two points
-        # starting from at least two points radians is converted to degrees
+        # starting from at least two points; radians is converted to degrees
         if (len(self.residuals[1])>1) and (abs(self.residuals[1][-1]-self.residuals[1][-2]) > 0.00001):
             self.regresstangente = np.polyfit([self.residuals[0][-1], self.residuals[0][-2]], [self.residuals[1][-1], self.residuals[1][-2]], 1)
             self.ax2.plot([degrees(min(self.residuals[0])), degrees(max(self.residuals[0]))], [x *self.regresstangente[0]+self.regresstangente[1] for x in [min(self.residuals[0]), max(self.residuals[0])]])
